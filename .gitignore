@@ -1,3 +1,46 @@
+#  de Git y OS ---
+.DS_Store
+.env                
+.env.local
+.vscode/             
+.idea/               
+
+# --- Python (backend/src) ---
+src/venv/            
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+*.sqlite3            
+/src/.env            
+
+# --- Node.js / React Native (frontend/interface) ---
+node_modules/        
+.expo/               
+.expo-shared/
+build/               
+dist/
+web-build/
+android/            
+ios/                 
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json    
+yarn.lock            
+*.apk                
+*.ipa                
+*.xcode* 
+
+# ---  Expo Go ---
+*.bundle
+.temp/
+
+# --- Others ---
+.DS_Store
+Thumbs.db
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
