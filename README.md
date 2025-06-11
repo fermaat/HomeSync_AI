@@ -281,6 +281,13 @@ Contributions are welcome! If you'd like to contribute, please follow these step
 5.  Push to the branch (`git push origin feature/your-feature-name`).
 6.  Open a Pull Request.
 
+📬 Contact
+For questions, collaborations, or feedback, feel free to reach out:
+
+📧 Email: fermaat.vl@gmail.com
+🧑‍💻 GitHub: [@fermaat](https://github.com/fermaat)
+🌐 [Website](https://fermaat.github.io)
+
 ---
 
 ## License
