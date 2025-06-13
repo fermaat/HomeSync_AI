@@ -17,7 +17,7 @@ load_dotenv(os.path.join(PROJECT_ROOT, ".env"))
 # Get the library root directory
 # This is the directory where the library files are located
 # TODO: check if this is the correct way to get the library root
-# LIBRARY_ROOT = files("deepmimic_persona_lib")
+# LIBRARY_ROOT = files("homesync_ai")
 
 
 class Settings(BaseSettings, case_sensitive=False, extra="ignore"):
@@ -53,6 +53,8 @@ class Settings(BaseSettings, case_sensitive=False, extra="ignore"):
 
     # model id
     model_id: str = "gemini-2.5-flash-preview-05-20"
+
+    database_url: str = os.getenv("DATABASE_URL")
 
 
 def config_logger(
@@ -119,7 +121,7 @@ def config_logger(
     logger.info(
         f"Log configured: {log_file_path} | Log level: {log_level} | Retention: {log_retention} | Rotation: {log_rotation}"
     )
-    logger.info(f"deepmimic-persona-lib version: {settings.version}")
+    logger.info(f"homesync version: {settings.version}")
 
 
 def register_global_exception_handler():

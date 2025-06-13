@@ -15,7 +15,7 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 
 import { LOCAL_IP } from '@env';
-//const LOCAL_IP = LOCAL_IP // || '192.168.1.116'; // Reemplaza con tu IP local si no está definida en .env
+
 const BACKEND_URL = `http://${LOCAL_IP}:8000/api/v1`;
 
 export default function App() {
@@ -85,6 +85,7 @@ export default function App() {
       } else {
         addDebugLog('❌ Image selection canceled');
       }
+      
     } catch (error) {
       addDebugLog(`❌ Error selecting image: ${error.message}`);
       Alert.alert("Error", "Image could not be selected: " + error.message);
@@ -105,7 +106,7 @@ export default function App() {
     setImageResponse(null);
 
     const requestData = {
-      image_base64: selectedImageBase64, // CAMBIADO: imagen_base64 -> image_base64
+      image_base64: selectedImageBase64,
       prompt_gemini: "Extract the products, quantities, unit prices, and totals from this purchase ticket. Give me the result in JSON format. Include the purchase date if you find it.",
     };
 
@@ -164,7 +165,7 @@ export default function App() {
       <Text style={styles.title}>HomeSync AI - Demo IA</Text>
 
       {/* Debug logs pannel */}
-      {/* {debugLogs.length > 0 && (
+      {debugLogs.length > 0 && (
         <View style={styles.debugPanel}>
           <Text style={styles.debugTitle}>🐛 Debug Logs:</Text>
           {debugLogs.map((log, index) => (
@@ -176,7 +177,7 @@ export default function App() {
             color="#ff6b6b"
           />
         </View>
-      )} */}
+      )}
 
       {/* Sección de Procesamiento de Tickets */}
       <View style={styles.section}>

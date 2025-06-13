@@ -1,7 +1,12 @@
-from fastapi import APIRouter, HTTPException
+from datetime import date, timedelta
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 from cfg import logger
+from src.database import crud
+from src.database.connection import get_db
 from src.services import gemini_service
 
 router = APIRouter()
@@ -17,7 +22,9 @@ class VoiceCommandRequest(BaseModel):
 
 
 @router.post("/process_ticket")
-async def process_ticket_endpoint(request: ProcessTicketRequest):
+async def process_ticket_endpoint(
+    request: ProcessTicketRequest, db: Session = Depends(get_db)
+):
     """
     Endpoint to process a ticket image using  AI.
     Expects a Base64 encoded image and a prompt for to extract data.
@@ -31,12 +38,13 @@ async def process_ticket_endpoint(request: ProcessTicketRequest):
         )
 
         # TODO BD logic
-        # example: crud.save_ticket_data(db, gemini_response_data)
+        ticket_db = crud.save_gemini_ticket_data(db, model_response_data)
 
         return {
             "status": "success",
             "message": "Model correctly processed the ticket image.",
             "extracted_data": model_response_data,
+            "ticket_id": str(ticket_db.id),
         }
     except Exception as e:
         logger.exception(f"Error in /process_ticket: {e}")
@@ -44,40 +52,73 @@ async def process_ticket_endpoint(request: ProcessTicketRequest):
 
 
 @router.post("/process_voice_command")
-async def process_voice_command_endpoint(request: VoiceCommandRequest):
+async def process_voice_command_endpoint(
+    request: VoiceCommandRequest, db: Session = Depends(get_db)
+):
     """
-    Endpoint to process a voice command (text)
+    Endpoint para procesar un comando de voz (texto) usando Gemini
+    y realizar acciones/consultas en la BD.
     """
     try:
-        # TODO: add a generic way for other providers (e.g:local)
         model_interpretation = await gemini_service.process_text_with_gemini(
             text=request.command_text,
             prompt="Interpret this command related to the shopping list or home inventory. Respond in JSON format with 'action' and 'details'.",
         )
-        # TODO: properly handle the modelinterpretation response
-        # Ejemplo:
-        if model_interpretation.get("action") == "get_shopping_list":
-            # items = crud.get_shopping_list(db)
-            return {
-                "status": "success",
-                "response": "Your current shopping list is... (items from DB would go here)",
-            }
-        elif model_interpretation.get("action") == "add_item":
-            # crud.add_item(db, gemini_interpretation.get("details").get("item"))
-            return {
-                "status": "success",
-                "response": f"I added {model_interpretation.get('details', {}).get('item', 'something')}.",
-            }
+
+        action = model_interpretation.get("action")
+        details = model_interpretation.get("details", {})
+        response_message = "couldn't understand the request."
+
+        if action == "category_spending":
+            categoria = details.get("category")
+            periodo = details.get("period")
+            if categoria and periodo:
+                end_date = date.today()
+                if periodo == "day":
+                    start_date = end_date
+                elif periodo == "week":
+                    start_date = end_date - timedelta(weeks=1)
+                elif periodo == "month":
+                    start_date = end_date.replace(day=1)
+                elif periodo == "year":
+                    start_date = end_date.replace(month=1, day=1)
+                else:
+                    response_message = (
+                        "Periodo no válido. Usa 'day', 'week', 'month' o 'year'."
+                    )
+                    return {"status": "error", "response": response_message}
+
+                items = crud.get_items_by_category_and_date_range(
+                    db, categoria, start_date, end_date
+                )
+                total_gasto = sum(item.precio_total_linea for item in items)
+                response_message = f"Your spending on {categoria} during the last {periodo} is {total_gasto:.2f}€."
+            else:
+                response_message = (
+                    "Need category, period and date range to calculate spending"
+                )
+
+        elif action == "recommend_shopping":
+            item_name = details.get("item")
+            if item_name:
+                # TODO: rethink logic
+                response_message = f"Recommendation for {item_name}: This is an advanced analysis logic that I haven't fully implemented yet, but it reminds me that I need to buy it."  # Placeholder
+            else:
+                response_message = "I need the item name to recommend."
+
+        elif action == "get_shopping_list":
+            # TODO: rethik logic
+            response_message = "Your pending shopping list is... (logic to implement)"
+
         else:
-            return {
-                "status": "success",
-                "response": f"Received command: '{request.command_text}'. The Model interpreted it as: {model_interpretation}",
-                "model_interpretation": model_interpretation,
-            }
+            response_message = "Received command: '{request.command_text}'. Gemini interpreted it as: {model_interpretation}. I can't perform that action yet."
+
+        return {
+            "status": "success",
+            "response": response_message,
+            "gemini_interpretation": model_interpretation,
+        }
 
     except Exception as e:
         logger.exception(f"Error en /procesar_comando_voz: {e}")
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
-
-
-# ... (otros endpoints si los tienes)
