@@ -162,7 +162,8 @@ export default function App() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>HomeSync AI - Demo IA</Text>
+      <Text style={styles.title}>HomeSync AI - NIANO Demo IA</Text>
+      
 
       {/* Debug logs pannel */}
       {debugLogs.length > 0 && (

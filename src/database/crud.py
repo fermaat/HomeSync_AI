@@ -74,14 +74,14 @@ def get_items_by_category_and_date_range(
 
 def save_gemini_ticket_data(db: Session, gemini_extracted_data: dict):
     try:
-        fecha_str = gemini_extracted_data.get("fecha") or str(date.today())
+        fecha_str = gemini_extracted_data.get("date") or str(date.today())
         try:
             item_date = date.fromisoformat(fecha_str)
         except ValueError:
             item_date = date.today()
 
         total_ticket = float(gemini_extracted_data.get("total", 0.0))
-        supermarket = gemini_extracted_data.get("supermercado")
+        supermarket = gemini_extracted_data.get("supermarket")
 
         db_ticket = create_ticket(
             db, item_date, total_ticket, gemini_extracted_data, supermarket
@@ -89,15 +89,16 @@ def save_gemini_ticket_data(db: Session, gemini_extracted_data: dict):
 
         items_list = gemini_extracted_data.get("items", [])
         for item_data in items_list:
-            name = item_data.get("nombre_producto") or item_data.get("producto")
-            quantity = float(item_data.get("cantidad", 1.0))
+            print(item_data)
+            name = item_data.get("product_name") or item_data.get("product")
+            quantity = float(item_data.get("quantity", 1.0))
             unit_price = float(
-                item_data.get("precio_unitario") or item_data.get("precio", 0.0)
+                item_data.get("unit_price") or item_data.get("price", 0.0)
             )
             line_total_price = float(
-                item_data.get("precio_total", unit_price * quantity)
+                item_data.get("total_price", unit_price * quantity)
             )
-            category = item_data.get("categoria", "Desconocida")
+            category = item_data.get("category", "Unknown")
             if name and line_total_price is not None:
                 create_item(
                     db,

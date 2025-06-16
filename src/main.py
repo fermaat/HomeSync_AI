@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from cfg import settings
 from src.api.routes import router
+from src.database.connection import create_db_and_tables
 
 app = FastAPI(title="HomeSync AI Backend")
 
@@ -24,5 +25,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+def on_startup():
+    print("Creating database tables if they don't exist...")
+    create_db_and_tables()
+    print("Database tables check complete.")
+
 
 app.include_router(router, prefix="/api/v1")

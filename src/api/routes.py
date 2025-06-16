@@ -1,3 +1,4 @@
+import json
 from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -32,14 +33,16 @@ async def process_ticket_endpoint(
     If an error occurs, it raises an HTTPException with a 500 status code.
     """
     try:
-        # This is a json
         model_response_data = await gemini_service.process_image_with_gemini(
             base64_image=request.image_base64, prompt=request.model_prompt
         )
-
+        print(model_response_data)
+        logger.info(f"Model response data: {model_response_data}")
+        print("=============================")
+        response = json.loads(model_response_data)
+        print(response.get("parsed"))
         # TODO BD logic
-        ticket_db = crud.save_gemini_ticket_data(db, model_response_data)
-
+        ticket_db = crud.save_gemini_ticket_data(db, response.get("parsed", {}))
         return {
             "status": "success",
             "message": "Model correctly processed the ticket image.",
