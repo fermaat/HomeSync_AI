@@ -1,41 +1,66 @@
-# HomeSync AI
+# HomeSync AI: Your Intelligent Household Management Assistant
 
-![HomeSync AI Logo Placeholder](https://via.placeholder.com/150/007bff/FFFFFF?text=HomeSync+AI)
+![HomeSync AI Logo Placeholder](https://github.com/fermaat/HomeSync_AI/blob/main/data/files/logo.jpg?raw=true)
 
-Welcome to **HomeSync AI**, an innovative application designed to streamline household management by leveraging advanced AI capabilities, specifically Google's Gemini Pro Vision model. This project aims to digitize grocery receipts, analyze spending habits, and provide smart recommendations for household purchases.
+Welcome to **HomeSync AI**, an innovative application designed to transform household management through the power of advanced Artificial Intelligence. At its heart, HomeSync AI leverages Google's cutting-edge **Gemini Pro Vision** model, providing an intelligent, multi-modal approach to digitizing grocery receipts, analyzing spending habits, and offering smart, data-driven recommendations for household purchases.
 
 ---
 
 ## Table of Contents
 
 1.  [About the Project](#about-the-project)
-2.  [Features](#features)
-3.  [Technology Stack](#technology-stack)
-4.  [Project Structure](#project-structure)
-5.  [Setup and Installation](#setup-and-installation)
+2.  [AI Core & Multi-Modality](#ai-core--multi-modality)
+3.  [Features](#features)
+4.  [Technology Stack](#technology-stack)
+5.  [Project Structure](#project-structure)
+6.  [Setup and Installation](#setup-and-installation)
     - [Prerequisites](#prerequisites)
-    - [Backend Setup (`src/`)](#backend-setup-src)
+    - [Dockerized Setup (Recommended)](#dockerized-setup-recommended)
+    - [Backend Setup (`src/`) (Manual, if not using Docker)](#backend-setup-src-manual-if-not-using-docker)
     - [Frontend Setup (`interface/`)](#frontend-setup-interface)
-6.  [Running the Application](#running-the-application)
-7.  [Usage](#usage)
-8.  [Database Schema](#database-schema)
-9.  [Contributing](#contributing)
-10. [License](#license)
+7.  [Running the Application](#running-the-application)
+8.  [Usage](#usage)
+9.  [Database Schema](#database-schema)
+10. [Contributing](#contributing)
+11. [License](#license)
 
 ---
 
 ## About the Project
 
-HomeSync AI is a personal assistant that helps you keep track of your grocery spending and manage your household inventory. By simply scanning your receipts, the application extracts product information, categorizes your purchases, and stores them in a robust database. This data is then used to provide insights into your spending patterns and intelligently recommend when to repurchase items based on your past habits.
+HomeSync AI isn't just another household management app; it's a personal AI assistant that intelligent automates the tedious task of tracking your grocery expenses and managing your home inventory. Our core innovation lies in the seamless integration of **visual intelligence** to process unstructured data (like receipt images) and **natural language understanding** to provide actionable insights. By simply scanning your grocery receipts, HomeSync AI precisely extracts product information, intelligently categorizes your purchases, and securely stores this invaluable data in a robust PostgreSQL database. This rich dataset then fuels sophisticated analytics, offering you a clear overview of your spending patterns and paving the way for intelligent recommendations on when to repurchase essential items, helping you optimize your budget and reduce waste.
+
+---
+
+## AI Core & Multi-Modality
+
+The intelligence behind HomeSync AI is powered by **Google's Gemini Pro Vision model**, a foundational AI model renowned for its multi-modal capabilities. This enables our application to process and understand information from various types of input, going beyond just text.
+
+### How Gemini's Multi-Modality is Leveraged:
+
+1.  **Image Understanding (Receipt Digitization):**
+
+    - **Visual Input:** The mobile application captures or selects an image of a physical grocery receipt.
+    - **Gemini Pro Vision Analysis:** This image, as a visual data input, is sent directly to the Gemini Pro Vision API. Gemini's advanced computer vision capabilities analyze the image to identify text (OCR), recognize patterns, and understand the layout of the receipt.
+    - **Intelligent Extraction:** Unlike simple OCR, Gemini understands the _context_ of the text within the image. It can accurately differentiate product names from prices, quantities from unit measurements, and even pinpoint the purchase date and store name, even with varying receipt formats, fonts, and potential creases or distortions. This is a key multi-modal strength – interpreting visual information to extract structured data.
+
+2.  **Textual Comprehension & Generation (Voice/Text Commands):**
+    - **Textual Input:** Users can interact with the AI via text commands (simulating voice input).
+    - **Gemini's Language Capabilities:** Gemini processes these natural language queries (e.g., "How much did I spend on dairy products last month?", "What are my most frequently purchased items?").
+    - **Contextual Reasoning & Response Generation:** By combining its understanding of the user's textual query with the structured data retrieved from the database (which was originally extracted from images), Gemini can formulate intelligent, human-like responses and actionable insights. This demonstrates its ability to bridge different data types – natural language input, structured database data, and its inherent understanding of categories and trends.
+
+By harnessing Gemini's ability to seamlessly integrate visual and textual understanding, HomeSync AI moves beyond basic data entry, providing a truly intelligent and adaptive household management experience.
+
+---
 
 ## Features
 
-- **Receipt Digitization:** Upload or capture images of your grocery receipts.
-- **AI-Powered Data Extraction:** Utilizes Google's **Gemini Pro Vision** to accurately extract product names, quantities, unit prices, total prices, and purchase dates from receipts.
-- **Spending Analytics:** Track your expenditure by specific categories (e.g., "cereals", "soft drinks") over custom time periods (daily, weekly, monthly, annually).
-- **Smart Purchase Recommendations:** (Future Development) Suggests when to buy specific items again based on your historical purchasing frequency.
-- **Voice Command Integration:** (Simulated via text input) Interact with the AI to query spending or request recommendations.
-- **Persistent Data Storage:** All extracted data is stored in a PostgreSQL database.
+- **Intelligent Receipt Digitization:** Effortlessly capture or upload grocery receipts, with **Gemini Pro Vision** extracting detailed product information, prices, quantities, and dates, even from complex or varied layouts.
+- **AI-Powered Spending Analytics:** Gain deep insights into your expenditure. HomeSync AI automatically categorizes purchases and allows you to track spending by category (e.g., "cereals", "soft drinks") over custom time periods (daily, weekly, monthly, annually), all powered by AI-extracted data.
+- **Smart Purchase Recommendations:** (Future Development) Leverage historical purchasing data analyzed by AI to receive intelligent suggestions on when to repurchase specific items, helping to prevent stock-outs and reduce impulsive buys.
+- **Conversational AI Interface:** Interact with your household assistant using natural language (via text input). Ask questions about your spending, get summaries, or inquire about inventory needs, with AI providing relevant and insightful responses.
+- **Persistent Data Storage:** All AI-extracted and user-generated data is securely stored in a robust PostgreSQL database, forming the foundation for comprehensive analytics and future AI enhancements.
+- **Containerized Development:** Easy setup and consistent environments for both backend and database using Docker and Docker Compose.
 
 ---
 
@@ -45,15 +70,16 @@ HomeSync AI is a personal assistant that helps you keep track of your grocery sp
 
 - **Python:** The core language for the backend logic.
 - **FastAPI:** A modern, fast (high-performance) web framework for building APIs.
-- **Google Gemini Pro Vision API:** For advanced image analysis and text generation from receipts.
-- **SQLAlchemy:** Python SQL Toolkit and Object Relational Mapper (ORM) for database interactions.
-- **PostgreSQL:** A powerful, open-source relational database system for data storage.
+- **Google Gemini Pro Vision API:** The powerhouse for multi-modal AI capabilities, including image analysis and text generation.
+- **SQLAlchemy:** Python SQL Toolkit and Object Relational Mapper (ORM) for robust database interactions.
+- **PostgreSQL:** A powerful, open-source relational database system for data storage (runs in Docker).
+- **Docker & Docker Compose:** For containerized, reproducible backend and database environments.
 - **`python-dotenv`:** For managing environment variables securely.
 
 ### Frontend (`interface/`)
 
 - **React Native (with Expo):** For building cross-platform mobile applications (iOS and Android).
-- **`expo-image-picker`:** To handle camera and photo library interactions.
+- **`expo-image-picker`:** To handle camera and photo library interactions for visual input.
 - **Axios:** A promise-based HTTP client for making API requests to the backend.
 - **`react-native-dotenv`:** For handling environment variables in the React Native application.
 
@@ -64,33 +90,32 @@ HomeSync AI is a personal assistant that helps you keep track of your grocery sp
 ```
 HomeSyncAI/
 ├── .env                           # Centralized environment variables for the entire project
+├── docker-compose.yml             # Docker Compose file for backend & PostgreSQL
 ├── cfg/                           # Shared configuration and constants (Python)
 │   ├── _config.py
-│   └── init.py
+│   └── __init__.py
 ├── src/                           # Backend (Python - FastAPI)
-│   ├── venv/                      # Python virtual environment
+│   ├── Dockerfile                 # Dockerfile for backend API
 │   ├── main.py                    # FastAPI application entry point
-│   ├── config.py                  # Backend configuration
-│   ├── database/                  # Database models and CRUD operations
-│   │   ├── models.py              # SQLAlchemy models (Ticket, Item)
-│   │   ├── crud.py                # Database interaction functions
-│   │   └── connection.py          # Database connection setup
-│   ├── services/                  # Business logic and external API integrations
-│   │   ├── gemini_service.py      # Gemini API integration
-│   │   └── analytics_service.py   # (Future) Analytics logic
-│   ├── api/                       # API routes (endpoints) and Pydantic schemas
-│   │   ├── routes.py              # FastAPI endpoints
-│   │   └── schemas.py             # Data models for API requests/responses
 │   ├── requirements.txt           # Python dependencies
-│   └── init.py                # Makes 'src' a Python package
+│   ├── database/                  # Database models and CRUD operations
+│   │   ├── models.py
+│   │   ├── crud.py
+│   │   └── connection.py
+│   ├── services/                  # Business logic and external API integrations
+│   │   ├── gemini_service.py
+│   │   └── analytics_service.py   # (Future)
+│   ├── api/                       # API routes (endpoints) and Pydantic schemas
+│   │   ├── routes.py
+│   │   └── schemas.py
+│   └── __init__.py
 └── interface/                     # Frontend (React Native - Expo)
-├── node_modules/              # Node.js dependencies
-├── App.js                     # Main application component (UI & logic)
-├── app.json                   # Expo project configuration
-├── package.json               # Node.js dependencies and scripts
-├── babel.config.js            # Babel configuration for react-native-dotenv
-└── .env                       # (No longer used, .env is in root)
-
+    ├── node_modules/
+    ├── App.js
+    ├── app.json
+    ├── package.json
+    ├── babel.config.js
+    └── .env
 ```
 
 ---
@@ -102,132 +127,162 @@ HomeSyncAI/
 - **Python 3.9+**
 - **Node.js 14+** and **npm** or **yarn**
 - **Expo CLI:** `npm install -g expo-cli`
-- **Docker Desktop (recommended for PostgreSQL):** [Install Docker](https://www.docker.com/products/docker-desktop/)
+- **Docker Desktop:** [Install Docker](https://www.docker.com/products/docker-desktop/)
 - A **Google Cloud Project** with the **Gemini API enabled** and an **API Key**.
 
-### Backend Setup (`src/`)
+---
 
-1.  **Navigate to the project root:**
-    ```bash
-    cd HomeSyncAI/
-    ```
-2.  **Create a Python virtual environment for the backend:**
-    ```bash
-    python -m venv src/venv
-    ```
-3.  **Activate the virtual environment:**
-    - **macOS/Linux:**
-      ```bash
-      source src/venv/bin/activate
-      ```
-    - **Windows:**
-      ```bash
-      src\venv\Scripts\activate
-      ```
-4.  **Install backend dependencies:**
+### Dockerized Setup (Recommended)
 
-    ```bash
-    pip install -r src/requirements.txt
-    ```
+The easiest way to get started is using Docker Compose, which will spin up both the PostgreSQL database and the backend API.
 
-    (Ensure `requirements.txt` contains: `fastapi`, `uvicorn`, `google-generativeai`, `psycopg2-binary`, `sqlalchemy`, `python-dotenv`, `pydantic`).
+1. **Clone the repository and navigate to the root:**
 
-5.  **Set up PostgreSQL (using Docker):**
-    ```bash
-    docker run --name homesync-postgres -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres
-    ```
-    - **Important:** Replace `mysecretpassword` with a strong password.
-6.  **Create the database:**
-    ```bash
-    docker exec -it homesync-postgres psql -U postgres
-    ```
-    Inside `psql` console, run:
-    ```sql
-    CREATE DATABASE homesync_db;
-    \q
-    ```
-7.  **Create your `.env` file at the `HomeSyncAI/` root directory:**
+   ```bash
+   git clone https://github.com/yourusername/HomeSyncAI.git
+   cd HomeSyncAI/
+   ```
 
-    ```dotenv
-    # HomeSyncAI/.env
-    DATABASE_URL="postgresql://postgres:mysecretpassword@localhost:5432/homesync_db"
-    GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
+2. **Create your `.env` file at the project root:**
 
-    # Frontend related variables (for backend to know its own IP/Port if needed)
-    FRONTEND_BACKEND_IP="YOUR_LOCAL_MACHINE_IP" # e.g., 192.168.1.XX or 10.0.2.2 for Android emulator
-    FRONTEND_BACKEND_PORT="8000"
-    FRONTEND_API_VERSION="v1"
-    ```
+   ```dotenv
+   # HomeSyncAI/.env
+   DATABASE_URL=postgresql://postgres:mysecretpassword@db:5432/homesync_db
+   GEMINI_API_KEY=YOUR_GEMINI_API_KEY
 
-    - **Replace `YOUR_GEMINI_API_KEY`** with your actual API key.
-    - **Replace `YOUR_LOCAL_MACHINE_IP`** with your computer's IP address. For Android emulators, `10.0.2.2` often works. For physical devices, your computer's local Wi-Fi IP is needed.
+   # Frontend related variables
+   FRONTEND_BACKEND_IP=YOUR_LOCAL_MACHINE_IP
+   FRONTEND_BACKEND_PORT=8000
+   FRONTEND_API_VERSION=v1
+   ```
+
+   - Replace `YOUR_GEMINI_API_KEY` and `YOUR_LOCAL_MACHINE_IP` as needed.
+
+3. **Start the backend and database:**
+
+   ```bash
+   docker-compose up --build
+   ```
+
+   - This will build the backend image, start the FastAPI server, and launch a PostgreSQL container.
+   - The backend will be available at `http://localhost:8000`.
+
+4. **(Optional) Run database migrations or initialization scripts if needed.**
+   - The backend will auto-create tables on startup.
+
+---
+
+### Backend Setup (`src/`) (Manual, if not using Docker)
+
+1. **Create and activate a Python virtual environment:**
+
+   ```bash
+   python -m venv src/venv
+   source src/venv/bin/activate
+   ```
+
+2. **Install backend dependencies:**
+
+   ```bash
+   pip install -r src/requirements.txt
+   ```
+
+3. **Set up PostgreSQL (using Docker, recommended):**
+
+   ```bash
+   docker run --name homesync-postgres -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres
+   ```
+
+   - Or use your own PostgreSQL instance.
+
+4. **Create the database:**
+
+   ```bash
+   docker exec -it homesync-postgres psql -U postgres
+   ```
+
+   Inside `psql`:
+
+   ```sql
+   CREATE DATABASE homesync_db;
+   \q
+   ```
+
+5. **Configure your `.env` as above.**
+
+6. **Start the backend:**
+   ```bash
+   uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+   ```
+
+---
 
 ### Frontend Setup (`interface/`)
 
-1.  **Navigate to the frontend directory:**
-    ```bash
-    cd HomeSyncAI/interface/
-    ```
-2.  **Install Node.js dependencies:**
-    ```bash
-    npm install
-    # or
-    yarn install
-    ```
-3.  **Configure `react-native-dotenv` in `babel.config.js`:**
-    Ensure `interface/babel.config.js` contains the `module:react-native-dotenv` plugin with `path: '../.env'`:
-    ```javascript
-    // interface/babel.config.js
-    module.exports = function (api) {
-      api.cache(true);
-      return {
-        presets: ["babel-preset-expo"],
-        plugins: [
-          [
-            "module:react-native-dotenv",
-            {
-              moduleName: "@env",
-              path: "../.env", // <-- Reads .env from the parent directory
-              safe: false,
-              allowUndefined: true,
-            },
-          ],
-        ],
-      };
-    };
-    ```
+1. **Navigate to the frontend directory:**
+
+   ```bash
+   cd interface/
+   ```
+
+2. **Install Node.js dependencies:**
+
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Configure `react-native-dotenv` in `babel.config.js`:**
+   Ensure `babel.config.js` contains:
+   ```javascript
+   // interface/babel.config.js
+   module.exports = function (api) {
+     api.cache(true);
+     return {
+       presets: ["babel-preset-expo"],
+       plugins: [
+         [
+           "module:react-native-dotenv",
+           {
+             moduleName: "@env",
+             path: "../.env",
+             safe: false,
+             allowUndefined: true,
+           },
+         ],
+       ],
+     };
+   };
+   ```
 
 ---
 
 ## Running the Application
 
-1.  **Start the Backend (from `HomeSyncAI/` root):**
-    Ensure your virtual environment is active.
+### Using Docker Compose (Recommended)
 
-    ```bash
-    cd HomeSyncAI/
-    source src/venv/bin/activate # or src\venv\Scripts\activate on Windows
-    uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
-    ```
+1. **Start everything:**
 
-    This will start the FastAPI server, usually accessible at `http://0.0.0.0:8000`. It will also create your database tables on startup.
+   ```bash
+   docker-compose up --build
+   ```
 
-2.  **Start the Frontend (from `HomeSyncAI/interface/`):**
+   - Backend: [http://localhost:8000](http://localhost:8000)
+   - PostgreSQL: exposed on port 5432 (internal to Docker network as `db`)
 
-    ```bash
-    cd HomeSyncAI/interface/
-    npx expo start
-    ```
+2. **Start the Frontend:**
+   ```bash
+   cd interface/
+   npx expo start
+   ```
+   - Scan the QR code with Expo Go or use an emulator.
 
-    This will open the Expo Dev Tools in your browser and display a QR code in the terminal.
+### Manual (Non-Docker) Workflow
 
-3.  **Open on Device/Emulator:**
-
-    - Scan the QR code with the **Expo Go** app on your physical device (ensure both are on the same Wi-Fi network).
-    - Or, use an emulator: press `a` for Android, `i` for iOS (if you have Xcode installed).
-
-4.  **Verify Backend URL in Frontend:**
-    In `interface/App.js`, the `BACKEND_URL` is constructed dynamically from your `.env` variables. Ensure `FRONTEND_BACKEND_IP` in `HomeSyncAI/.env` matches the IP address where your backend is running and is accessible from your device/emulator. Check the console logs for the exact URL being used by the frontend.
+- Start PostgreSQL (see above).
+- Activate Python venv and run backend with `uvicorn`.
+- Start frontend as above.
 
 ---
 
@@ -281,15 +336,15 @@ Contributions are welcome! If you'd like to contribute, please follow these step
 5.  Push to the branch (`git push origin feature/your-feature-name`).
 6.  Open a Pull Request.
 
-📬 Contact
+📬 Contact  
 For questions, collaborations, or feedback, feel free to reach out:
 
-📧 Email: fermaat.vl@gmail.com
-🧑‍💻 GitHub: [@fermaat](https://github.com/fermaat)
+📧 Email: fermaat.vl@gmail.com  
+🧑‍💻 GitHub: [@fermaat](https://github.com/fermaat)  
 🌐 [Website](https://fermaat.github.io)
 
 ---
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details (You might want to create a LICENSE file in your root directory if you plan to share this project).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

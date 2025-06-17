@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: homesync_postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d homesync_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Backend Service
+  backend:
+    build:
+      context: .
+      dockerfile: src/Dockerfile
+    container_name: homesync_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      FRONTEND_BACKEND_IP: ${LOCAL_IP}
+      FRONTEND_BACKEND_PORT: ${FRONTEND_BACKEND_PORT} 
+      FRONTEND_API_VERSION: ${FRONTEND_API_VERSION}
+    depends_on:
+      db: 
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+      - ./cfg:/app/cfg
+
+volumes:
+  db_data: 
