@@ -1,6 +1,6 @@
 # HomeSync AI: Your Intelligent Household Management Assistant
 
-![HomeSync AI Logo Placeholder](https://github.com/fermaat/HomeSync_AI/blob/main/data/files/logo.jpg?raw=true)
+<img src="https://github.com/fermaat/HomeSync_AI/blob/main/data/files/logo.jpg?raw=true" alt="HomeSync AI Logo Placeholder" width="300">
 
 Welcome to **HomeSync AI**, an innovative application designed to transform household management through the power of advanced Artificial Intelligence. At its heart, HomeSync AI leverages Google's cutting-edge **Gemini Pro Vision** model, providing an intelligent, multi-modal approach to digitizing grocery receipts, analyzing spending habits, and offering smart, data-driven recommendations for household purchases.
 
